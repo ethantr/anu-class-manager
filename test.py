@@ -69,7 +69,7 @@ root.rowconfigure(0, weight=1)
 
 
 classInput = StringVar()
-inputent = ttk.Entry(mainframe, width=10, textvariable=feet)
+inputent = ttk.Entry(mainframe, width=10, textvariable=classInput)
 inputent.grid(column=3, row=1, sticky=(W, E))
 label = StringVar()
 ttk.Label(mainframe, textvariable=label).grid(column=2, row=2, sticky=(W, E))
