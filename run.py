@@ -21,8 +21,8 @@ class CourseScraper:
         self.course_name = course_name 
 
 
-    def open_browser(self,course_name,year):
-        search_url = 'https://programsandcourses.anu.edu.au/'+year+'/course/'+ course_name.upper()
+    def open_browser(self):
+        search_url = f'https://programsandcourses.anu.edu.au/{self.year}/course/{self.course_name.upper()}'
         self.driver.get(search_url)
     
     def parse_class_number(self,row):
@@ -57,52 +57,50 @@ class CourseScraper:
 
         return class_numbers
     
-    def save_to_csv(self, data):
-        file_name = f"data/{self.course_name}_{self.year}_class_info.csv"
+
+class CacheManager:
+    @staticmethod
+    def does_course_exist(course_name, year):
+        file_path = f"data/{course_name}_{year}_class_info.csv"
+        return os.path.exists(file_path)
+
+    @staticmethod
+    def get_data_from_cache(course_name, year):
+        file_path = f"data/{course_name}_{year}_class_info.csv"
+        data = []
+        if CacheManager.does_course_exist(course_name, year):
+            with open(file_path, 'r', newline='') as file:
+                csv_reader = csv.reader(file)
+                data = list(csv_reader)
+        return data
+
+class DataManager:
+    @staticmethod
+    def save_to_csv(course_name, year, data):
+        file_name = f"data/{course_name}_{year}_class_info.csv"
         with open(file_name, mode="w", newline="") as file:
-              writer = csv.writer(file)
-              writer.writerow(["Session", "Class Number"])  # Write header row
-              for session, class_number in data:
-                  writer.writerow([session, class_number])
+            writer = csv.writer(file)
+            writer.writerow(["Session", "Class Number"])
+            writer.writerows(data)
         print(f"Data saved to {file_name}")
 
 
-
-def does_course_exist(course_name,year):
-    file_path = f"data/{course_name}_{year}_class_info.csv"  
-
-    if os.path.exists(file_path):
-        return True
-    else:
-         return False
-
-
-def get_data_from_cache(course_name,year):
-    file_path = f"data/{course_name}_{year}_class_info.csv" 
-    data = []
-    if(does_course_exist(course_name,year)):
-        with open(file_path, 'r', newline='') as file:
-            csv_reader = csv.reader(file)
-            for row in csv_reader:
-                data.append(row)
-
-    return data
-
 def main():
     parser = argparse.ArgumentParser(description= "ANU Course Scraper")
-    parser.add_argument("course_name", help = "ANU Course Name", default="ASTR1001")
+    parser.add_argument("course_name", help = "ANU Course Name")
     parser.add_argument("--year", default=str(datetime.now().year), help="Academic year")
     args = parser.parse_args()
-    course_name = args.course_name;
+    course_name = args.course_name
+    year = args.year
 
-    if(does_course_exist(course_name,args.year)):
-        data = get_data_from_cache(course_name,year)
+    if CacheManager.does_course_exist(course_name,year):
+        data = CacheManager.get_data_from_cache(course_name,year)
     else:
-        scraper = CourseScraper(course_name,args.year)
-        scraper.open_browser(args.course_name,args.year)
+        scraper = CourseScraper(course_name,year)
+        scraper.open_browser(course_name,year)
         data = scraper.get_class_numbers()
         if data:
-            scraper.save_to_csv(data)
+            DataManager.save_to_csv(data)
 
     if data:
         for session, class_number in data:
