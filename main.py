@@ -95,10 +95,10 @@ def main():
         data = CacheManager.get_data_from_cache(course_name,year)
     else:
         scraper = CourseScraper(course_name,year)
-        scraper.open_browser(course_name,year)
+        scraper.open_browser()
         data = scraper.get_class_numbers()
         if data:
-            DataManager.save_to_csv(data)
+            DataManager.save_to_csv(course_name,year,data)
 
     if data:
         for session, class_number in data:
