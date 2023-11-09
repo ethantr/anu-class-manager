@@ -1,6 +1,7 @@
 # anu-class-manager
 
 ANU Class Manager is a Python application for scraping and managing class information for Australian National University (ANU) courses.
+The original purpose was to have a simple command for easy and quick access of class information for enrollment.
 
 ## Features
 
