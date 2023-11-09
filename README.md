@@ -54,4 +54,4 @@ The application will scrape class information from the ANU website and save it i
 
 
 
-pip install -r requirements.txt
+**Disclaimer:** The data obtained by this project is sourced from the Australian National University (ANU) website and is not owned by the author. This project is intended for educational and demonstrative purposes and does not claim ownership of the data. If required, please contact me and I can remove this from GitHub.
