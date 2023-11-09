@@ -1,7 +1,5 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from tkinter import *
-from tkinter import ttk
 import argparse
 import csv
 import os
